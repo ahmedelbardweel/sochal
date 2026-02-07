@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .dark {
+    --bg-primary: #18191A;
+    --bg-secondary: #242526;
+    --bg-tertiary: #3A3B3C;
+    --text-primary: #E4E6EB;
+    --text-secondary: #B0B3B8;
+    --text-tertiary: #8A8D91;
+    --border-light: #3A3B3C;
+    --border-medium: #4E4F50;
+    --border-dark: #6B7AFF;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 text-white font-medium py-3 px-6 rounded-sm shadow-level-1 transition-all duration-200;
+  }
+  .btn-primary:hover {
+    @apply bg-primary-300 transform scale-102;
+  }
+  .btn-primary:active {
+    @apply transform scale-98;
+  }
+  .post-card {
+    @apply bg-bg-secondary rounded-md p-md shadow-level-1 mb-md;
+  }
+}

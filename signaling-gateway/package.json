@@ -1,0 +1,23 @@
+{
+    "name": "signaling-gateway",
+    "version": "1.0.0",
+    "description": "WebSocket signaling gateway for WebRTC Live Stories",
+    "main": "dist/server.js",
+    "scripts": {
+        "start": "node dist/server.js",
+        "dev": "ts-node src/server.ts",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "dotenv": "^16.3.1",
+        "jsonwebtoken": "^9.0.0",
+        "ws": "^8.13.0"
+    },
+    "devDependencies": {
+        "@types/jsonwebtoken": "^9.0.2",
+        "@types/node": "^20.2.5",
+        "@types/ws": "^8.5.4",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.0.4"
+    }
+}
