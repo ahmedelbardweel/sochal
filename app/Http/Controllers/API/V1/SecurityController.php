@@ -26,6 +26,8 @@ class SecurityController extends Controller
         // Storage
         $user->update(['metadata->otp' => $otp]);
 
+        // TEMPORARILY DISABLED: SMTP not available on Render free tier
+        /*
         try {
             // Actual Email sending
             Mail::to($user->email)->send(new OTPVerification($otp));
@@ -40,6 +42,12 @@ class SecurityController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+        */
+
+        return response()->json([
+            'message' => 'Verification code generated.',
+            'otp' => $otp, // ⚠️ TEMP: Remove in production
+        ]);
     }
 
     /**

@@ -40,15 +40,21 @@ class AuthController extends Controller
         ], now()->addMinutes(15));
 
         // Send professional verification email
+        // TEMPORARILY DISABLED: SMTP not available on Render free tier
+        // Will be re-enabled when using paid plan or external SMTP service
+        /*
         try {
             Mail::to($email)->send(new OTPVerification($otp));
         } catch (\Exception $e) {
             Log::error('Registration Email Failure: ' . $e->getMessage());
         }
+        */
 
         return response()->json([
-            'message' => 'Verification code sent to your email. Please verify to complete registration.',
+            'message' => 'Verification code generated. TEMP: Check response for code (will be sent via email in production).',
             'email' => $email,
+            // TEMPORARY: Remove this line in production
+            'otp' => $otp, // ⚠️ INSECURE: Only for development/testing
         ], 200);
     }
 
@@ -114,6 +120,8 @@ class AuthController extends Controller
         // Refresh cache with new OTP
         Cache::put("pending_user_{$request->email}", $pendingData, now()->addMinutes(15));
 
+        // TEMPORARILY DISABLED: SMTP not available
+        /*
         try {
             Mail::to($request->email)->send(new OTPVerification($otp));
             return response()->json(['message' => 'New verification code transmitted to your terminal.']);
@@ -121,6 +129,12 @@ class AuthController extends Controller
             Log::error('Resend OTP Failure: ' . $e->getMessage());
             return response()->json(['message' => 'Failed to transmit code'], 500);
         }
+        */
+
+        return response()->json([
+            'message' => 'New code generated.',
+            'otp' => $otp, // ⚠️ TEMP: Remove in production
+        ]);
     }
 
     public function login(Request $request)
