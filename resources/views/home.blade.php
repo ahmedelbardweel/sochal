@@ -662,7 +662,8 @@
                 this.setupRealtime();
                 console.log('Connecting to Signaling...');
                 await this.room.connect().catch(err => {
-                    throw new Error('Signaling server unreachable. Make sure "npm run dev" is running in signaling-gateway.');
+                    console.warn('[Dev Notice] Signaling server unavailable (Live features disabled):', err.message);
+                    throw err; // Re-throw to be caught by outer try-catch
                 });
                 
                 this.pc = new RTCPeerConnection({ iceServers: this.room.iceServers });
@@ -694,7 +695,13 @@
                 this.setupRealtime();
             } catch (e) {
                 console.error('Host failed:', e);
-                window.toast(e.message, 'error');
+                // Show user-friendly message if live features are unavailable
+                const isServerUnavailable = e.message && (e.message.includes('Signaling') || e.message.includes('SFU'));
+                if (isServerUnavailable) {
+                    window.toast('Live streaming is temporarily unavailable', 'info');
+                } else {
+                    window.toast(e.message, 'error');
+                }
                 this.stop();
             }
         }
@@ -832,7 +839,8 @@
 
                 console.log('Connecting to Signaling (Viewer)...');
                 await this.room.connect().catch(err => {
-                    throw new Error('Signaling server unreachable. Make sure "npm run dev" is running in signaling-gateway.');
+                    console.warn('[Dev Notice] Signaling server unavailable (Live features disabled):', err.message);
+                    throw err;
                 });
                 
                 this.pc = new RTCPeerConnection({ iceServers: this.room.iceServers });
@@ -887,7 +895,12 @@
                 console.log('Viewer live setup complete!');
             } catch (e) {
                 console.error('Viewer failed:', e);
-                window.toast(e.message || 'Live connection failed', 'error');
+                const isServerUnavailable = e.message && (e.message.includes('Signaling') || e.message.includes('SFU'));
+                if (isServerUnavailable) {
+                    window.toast('Live streaming service is temporarily unavailable', 'info');
+                } else {
+                    window.toast(e.message || 'Live connection failed', 'error');
+                }
                 this.leave();
             }
         }
