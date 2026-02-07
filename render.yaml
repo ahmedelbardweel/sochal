@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: upscrolling-app
+    name: sochal
     env: docker
     plan: free
     envVars:
