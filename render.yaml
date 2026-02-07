@@ -12,6 +12,8 @@ services:
         value: stderr
       - key: APP_ENV
         value: production
+      - key: QUEUE_CONNECTION
+        value: sync
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
