@@ -9,9 +9,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libpq-dev \
-    nodejs \
-    npm
+    libpq-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -31,9 +29,7 @@ COPY . /var/www
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Install Node dependencies and build assets
-RUN npm install
-RUN npm run build
+
 
 # Fix permissions
 RUN chown -R www-data:www-data /var/www
