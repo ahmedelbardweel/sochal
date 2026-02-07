@@ -1,8 +1,8 @@
 #!/bin/sh
-echo "Caching configuration..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+echo "Clearing configuration cache..."
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 
 echo "Running migrations..."
 php artisan migrate --force
