@@ -29,7 +29,7 @@ WORKDIR /var/www
 COPY . /var/www
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Install Node dependencies and build assets
 RUN npm install
