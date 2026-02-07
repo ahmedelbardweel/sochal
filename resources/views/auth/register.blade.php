@@ -124,16 +124,13 @@
                     body: JSON.stringify(formData)
                 });
                 
-                // Store email AND OTP for verification step
-                localStorage.setItem('pending_verification_email', formData.email);
-                
-                // ⚠️ TEMPORARY: Display OTP code on screen (bypassing email requirement)
-                if (response.otp) {
-                    localStorage.setItem('pending_otp_code', response.otp);
+                // ⚠️ TEMPORARY: Auto-login after registration (no verification required)
+                if (response.token) {
+                    window.bridge.setToken(response.token);
                 }
                 
-                window.toast('Account created! Redirecting to verification...', 'success');
-                setTimeout(() => window.location.href = '/verify', 800);
+                window.toast('Account created! Welcome aboard!', 'success');
+                setTimeout(() => window.location.href = '/home', 800);
             } catch (err) {
                 window.toast(err.message || 'Registration failed', 'error');
                 btn.innerHTML = 'Create Account';

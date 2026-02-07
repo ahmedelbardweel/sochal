@@ -27,35 +27,32 @@ class AuthController extends Controller
             'display_name' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $otp = rand(100000, 999999);
-        $email = $request->email;
-
-        // Store registration data in Cache for 15 minutes
-        Cache::put("pending_user_$email", [
-            'username' => $request->username,
-            'email' => $email,
-            'password' => Hash::make($request->password),
-            'display_name' => $request->display_name ?? $request->username,
-            'otp' => $otp,
-        ], now()->addMinutes(15));
-
-        // Send professional verification email
-        // TEMPORARILY DISABLED: SMTP not available on Render free tier
-        // Will be re-enabled when using paid plan or external SMTP service
-        /*
+        // ⚠️ TEMPORARY: Skip email verification - create user immediately
+        DB::beginTransaction();
         try {
-            Mail::to($email)->send(new OTPVerification($otp));
-        } catch (\Exception $e) {
-            Log::error('Registration Email Failure: ' . $e->getMessage());
-        }
-        */
+            $user = User::create([
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'display_name' => $request->display_name ?? $request->username,
+                'email_verified_at' => now(), // Auto-verify
+                'is_verified' => true,
+            ]);
 
-        return response()->json([
-            'message' => 'Verification code generated. TEMP: Check response for code (will be sent via email in production).',
-            'email' => $email,
-            // TEMPORARY: Remove this line in production
-            'otp' => $otp, // ⚠️ INSECURE: Only for development/testing
-        ], 200);
+            Auth::login($user); // Establish web session
+            $token = $user->createToken('auth_token')->plainTextToken;
+            
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Account created successfully! Redirecting...',
+                'user' => $user,
+                'token' => $token,
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Registration failed', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function verifyRegistration(Request $request)
