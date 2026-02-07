@@ -17,8 +17,15 @@
                 </div>
                 <h2 class="text-3xl font-bold tracking-tight text-white">Verify Neural Link</h2>
                 <p class="mt-4 text-sm text-text-secondary leading-relaxed">
-                    Enter the 6-digit protocol code sent to your terminal.
+                    Enter the 6-digit protocol code below.
                 </p>
+                
+                <!-- ⚠️ TEMPORARY: Display OTP Code on Screen -->
+                <div id="otpDisplay" class="hidden mt-6 p-4 bg-primary-500/10 border-2 border-primary-500/30 rounded-2xl">
+                    <p class="text-xs text-primary-300 font-semibold mb-2">🔐 YOUR VERIFICATION CODE:</p>
+                    <div class="text-4xl font-bold text-white text-center tracking-widest" id="displayedOtp">------</div>
+                    <p class="text-xs text-text-secondary mt-2 text-center">⚠️ Dev Mode: Email sending disabled</p>
+                </div>
             </div>
 
         <form id="verifyForm" class="space-y-8">
@@ -114,7 +121,15 @@
                 method: 'POST',
                 body: JSON.stringify({ email })
             });
-            window.toast(data.message || 'New verification code transmitted.', 'success');
+            
+            // ⚠️ TEMPORARY: Display new OTP code if returned
+            if (data.otp) {
+                localStorage.setItem('pending_otp_code', data.otp);
+                document.getElementById('otpDisplay').classList.remove('hidden');
+                document.getElementById('displayedOtp').innerText = data.otp;
+            }
+            
+            window.toast(data.message || 'New verification code generated.', 'success');
         } catch (err) {
             window.toast(err.message || 'Transmission failed', 'error');
         }
@@ -125,7 +140,15 @@
     // Do not auto-send on load if user just registered, 
     // but show a hint that it's in their inbox.
     document.addEventListener('DOMContentLoaded', () => {
-        window.toast('Check your inbox for the neural protocol code.', 'info');
+        // ⚠️ TEMPORARY: Display OTP code if available (dev mode)
+        const storedOtp = localStorage.getItem('pending_otp_code');
+        if (storedOtp) {
+            document.getElementById('otpDisplay').classList.remove('hidden');
+            document.getElementById('displayedOtp').innerText = storedOtp;
+            window.toast('⚠️ Dev Mode: OTP shown above (email disabled)', 'info');
+        } else {
+            window.toast('Check your inbox for the neural protocol code.', 'info');
+        }
     });
 </script>
 @endsection

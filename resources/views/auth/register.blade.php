@@ -124,10 +124,15 @@
                     body: JSON.stringify(formData)
                 });
                 
-                // Store email for verification step
+                // Store email AND OTP for verification step
                 localStorage.setItem('pending_verification_email', formData.email);
                 
-                window.toast('Neural link established!', 'success');
+                // ⚠️ TEMPORARY: Display OTP code on screen (bypassing email requirement)
+                if (response.otp) {
+                    localStorage.setItem('pending_otp_code', response.otp);
+                }
+                
+                window.toast('Account created! Redirecting to verification...', 'success');
                 setTimeout(() => window.location.href = '/verify', 800);
             } catch (err) {
                 window.toast(err.message || 'Registration failed', 'error');
